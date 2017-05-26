@@ -1,4 +1,5 @@
 from modshogun import *
+import numpy as np
 from numpy import array
 
 def load_data():
@@ -41,20 +42,23 @@ def show_result(data):
     ys = []
     xs = []
 
-    for k in range(5, 40):
+    for k in range(5, 30):
         xs.append(k)
         _ys = []
 
-        for i in range(1, 151):
+        for i in range(1, 51):
             result, centers, radiuses = train_kmeans(k, data)
             _ys.append(sum(radiuses)/k)
 
-        ys.append(sum(_ys)/150)
-
-    import matplotlib.pyplot as plt
-
-    plt.plot(xs,ys)
-    plt.show()
+        ys.append(sum(_ys)/50)
+    gradients = [abs(m) for m in np.gradient(array(ys))]
+    print gradients
+    print min(gradients)
+    print gradients.index(min(gradients)) + 5
+    # import matplotlib.pyplot as plt
+    #
+    # plt.plot(xs,ys)
+    # plt.show()
 
 def get_result(k, data):
     centers = []
@@ -69,13 +73,17 @@ def get_result(k, data):
 
 import json
 
-result, centers = get_result(13, data)
-with open('centers.json', 'w') as outfile:
-    json.dump(centers.tolist(), outfile)
+def save_result(data):
+    result, centers = get_result(13, data)
+    with open('centers.json', 'w') as outfile:
+        json.dump(centers.tolist(), outfile)
 
-output = {}
-for i, name in enumerate(names):
-    output[name] = int(result[i])
+    output = {}
+    for i, name in enumerate(names):
+        output[name] = int(result[i])
 
-with open('result.json', 'w') as outfile:
-    json.dump(output, outfile)
+    with open('result.json', 'w') as outfile:
+        json.dump(output, outfile)
+
+
+show_result(data)
