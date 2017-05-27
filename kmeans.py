@@ -1,6 +1,8 @@
+from numpy import random
 from modshogun import *
 import numpy as np
 from numpy import array
+import matplotlib.pyplot as plt
 
 def load_data():
     f = open('./play_freq.data')
@@ -66,7 +68,7 @@ def get_result(k, data):
     while True:
         result, centers, radiuses = train_kmeans(k, data)
         r = sum(radiuses)/13
-        if r < 16.9:
+        if r < 100:
             print(r)
             break
     return result, centers
@@ -85,5 +87,24 @@ def save_result(data):
     with open('result.json', 'w') as outfile:
         json.dump(output, outfile)
 
+def draw_values(k, data, index):
+    ind = np.arange(10)
+    width = 0.5
+    result, centers = get_result(k, data)
+    headers = ['Transition', 'Isolation', 'PRBallHandler', 'PRRollman', 'Postup', 'Spotup', 'Handoff', 'Cut', 'OffScreen', 'OffRebound']
+    fig, ax = plt.subplots()
+    rects = plt.bar(ind, [values[index] for values in centers], width, color=[(x/10.0, x/20.0, 0.75) for x in range(10)])
+    ax.set_ylabel('Freq Rating')
+    ax.set_title('Player Cluster')
+    ax.set_xticks(ind)
+    # ax.set_xticklabels(headers)
+    ax.legend(rects, headers)
+    plt.figure(num=1,figsize=(18,10))
+    plt.show()
 
-show_result(data)
+
+draw_values(13, data, 0)
+
+# for i, name in enumerate(names):
+#     if int(result[i]) == 0:
+#         print(name)
