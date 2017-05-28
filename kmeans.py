@@ -97,7 +97,6 @@ def draw_values(k, data, index):
     ax.set_ylabel('Freq Rating')
     ax.set_title('Player Cluster')
     ax.set_xticks(ind)
-    # ax.set_xticklabels(headers)
     ax.legend(rects, headers)
     plt.figure(num=1,figsize=(18,10))
     plt.show()

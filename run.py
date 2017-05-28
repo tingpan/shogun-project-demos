@@ -31,4 +31,4 @@ for player in play_types['PlayTypesPerGame']['Transition']:
 
 print(len(players))
 print(len(data))
-print(len(play_types['PlayTypesPerGame']['Transition']))
+print((play_types['PlayTypesPerGame']['Transition'][0]))
