@@ -44,23 +44,31 @@ def show_result(data):
     ys = []
     xs = []
 
+    # for k in range(5, 30):
+    #     xs.append(k)
+    #     _ys = []
+    #
+    #     for i in range(1, 51):
+    #         result, centers, radiuses = train_kmeans(k, data)
+    #         _ys.append(sum(radiuses)/k)
+    #
+    #     ys.append(sum(_ys)/50)
+    player_count = len(data[0])
     for k in range(5, 30):
         xs.append(k)
         _ys = []
-
-        for i in range(1, 51):
+        for i in range(1, 11):
             result, centers, radiuses = train_kmeans(k, data)
-            _ys.append(sum(radiuses)/k)
+            for player_i in range(0, player_count):
+                cluster_i = int(result[player_i])
+                center = array([x[cluster_i] for x in centers])
+                player = array([y[player_i] for y in data])
+                _ys.append(np.sum((center - player)**2))
+        ys.append(sum(_ys)/player_count)
+    import matplotlib.pyplot as plt
 
-        ys.append(sum(_ys)/50)
-    gradients = [abs(m) for m in np.gradient(array(ys))]
-    print gradients
-    print min(gradients)
-    print gradients.index(min(gradients)) + 5
-    # import matplotlib.pyplot as plt
-    #
-    # plt.plot(xs,ys)
-    # plt.show()
+    plt.plot(xs,ys)
+    plt.show()
 
 def get_result(k, data):
     centers = []
@@ -98,12 +106,9 @@ def draw_values(k, data, index):
     ax.set_title('Player Cluster')
     ax.set_xticks(ind)
     ax.legend(rects, headers)
-    plt.figure(num=1,figsize=(18,10))
     plt.show()
 
 
-draw_values(13, data, 0)
+# draw_values(13, data, 0)
 
-# for i, name in enumerate(names):
-#     if int(result[i]) == 0:
-#         print(name)
+show_result(data)
