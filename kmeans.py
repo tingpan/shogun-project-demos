@@ -44,15 +44,6 @@ def show_result(data):
     ys = []
     xs = []
 
-    # for k in range(5, 30):
-    #     xs.append(k)
-    #     _ys = []
-    #
-    #     for i in range(1, 51):
-    #         result, centers, radiuses = train_kmeans(k, data)
-    #         _ys.append(sum(radiuses)/k)
-    #
-    #     ys.append(sum(_ys)/50)
     player_count = len(data[0])
     for k in range(5, 30):
         xs.append(k)
@@ -101,7 +92,7 @@ def draw_values(k, data, index):
     result, centers = get_result(k, data)
     headers = ['Transition', 'Isolation', 'PRBallHandler', 'PRRollman', 'Postup', 'Spotup', 'Handoff', 'Cut', 'OffScreen', 'OffRebound']
     fig, ax = plt.subplots()
-    rects = plt.bar(ind, [values[index] for values in centers], width, color=[(x/10.0, x/20.0, 0.75) for x in range(10)])
+    rects = plt.bar(ind, [values[index] for values in centers], width, color=[(min(x/10.0, 1), x/20.0, 0.55) for x in range(1,21,2)])
     ax.set_ylabel('Freq Rating')
     ax.set_title('Player Cluster')
     ax.set_xticks(ind)
