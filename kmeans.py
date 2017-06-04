@@ -1,8 +1,9 @@
-from numpy import random
+# functions for creating kmeans notebook
 from modshogun import *
 import numpy as np
 from numpy import array
 import matplotlib.pyplot as plt
+import json
 
 def load_data():
     f = open('./play_freq.data')
@@ -71,8 +72,6 @@ def get_result(k, data):
             print(r)
             break
     return result, centers
-
-import json
 
 def save_result(data):
     result, centers = get_result(13, data)
