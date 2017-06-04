@@ -1,3 +1,4 @@
+# functions for represent each team with the average score and played-time percentage for each type
 import json
 
 with open('result.json') as data_file:
