@@ -7,7 +7,11 @@ with open('result.json') as data_file:
 
 with open('data/dashboard/2015-16/2015-16_play_types_dashboard.json') as data_file:
     play_types = json.load(data_file)
-print(data.keys())
+
+
+with open('data/dashboard/2015-16/2015-16_general_dashboard.json') as data_file:
+    general_dashboard = json.load(data_file)
+
 i = 0
 players = []
 for player in play_types['PlayTypesPerGame']['Transition']:
@@ -30,6 +34,7 @@ for player in play_types['PlayTypesPerGame']['Transition']:
         players.append(player_info)
 
 
-print(len(players))
-print(len(data))
-print((play_types['PlayTypesPerGame']['Transition'][0]))
+print(players[0]['PLAYER_ID'])
+# print(len(data))
+# print((play_types['PlayTypesPerGame']['Transition'][0]))
+print(general_dashboard['GeneralStatsPerGame']['Base'][0].keys())
