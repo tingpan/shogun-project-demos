@@ -59,7 +59,7 @@ def prepare_game_data(team_scores):
             team_abbrs = game['MATCHUP'].split(' @ ')
             for team_abbr in team_abbrs:
                 game_scores[game['GAME_ID']] += team_scores[team_abbr]
-            game_scores[game['GAME_ID']] += game['WL']
+            game_scores[game['GAME_ID']].append(str(1 if game['WL'] == 'W' else 0))
     return game_scores
 
 def save_to_files():
@@ -75,7 +75,7 @@ def save_to_files():
     for data in parsed_data[:-70]:
         train_data += data[0] + '\n'
         train_label += data[1] + '\n'
-    for data in parsed_data[:]:
+    for data in parsed_data[len(parsed_data) - 70:]:
         test_data += data[0] + '\n'
         test_label += data[1] + '\n'
     with open('test.data', 'w') as file:
