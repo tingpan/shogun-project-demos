@@ -20,7 +20,7 @@ train_feats, train_labels = load_file(train_data_file, train_label_file)
 
 comb_rule=MajorityVote()
 feat_types=array([False]*52)
-rand_forest=setup_random_forest(10, 4,comb_rule,feat_types)
+rand_forest=setup_random_forest(30, 7,comb_rule,feat_types)
 
 rand_forest.set_labels(train_labels)
 rand_forest.train(train_feats)
@@ -34,7 +34,7 @@ output_rand_forest_train=rand_forest.apply_multiclass(train_feats)
 output_rand_forest_test=rand_forest.apply_multiclass(test_feats)
 
 def train_cart(train_feats,train_labels,feature_types,problem_type):
-    c=CARTree(feature_types,problem_type,2,False)
+    c=CARTree(feature_types,problem_type,2,True)
     c.set_labels(train_labels)
     c.train(train_feats)
 
@@ -60,3 +60,30 @@ print('CART training accuracy : '+str(round(cart_train_accuracy,3))+'%')
 print
 print('Random Forest test accuracy : '+str(round(rf_test_accuracy,3))+'%')
 print('CART test accuracy : '+str(round(cart_test_accuracy,3))+'%')
+
+def get_rf_accuracy(num_trees,rand_subset_size):
+    rf=setup_random_forest(num_trees,rand_subset_size,comb_rule,feat_types)
+    rf.set_labels(train_labels)
+    rf.train(train_feats)
+    out_test=rf.apply_multiclass(test_feats)
+    acc=MulticlassAccuracy()
+    return acc.evaluate(out_test,test_labels)
+
+
+# import matplotlib.pyplot as plt
+# num_trees4=[5,10,20,50,100]
+# rf_accuracy_4=[round(get_rf_accuracy(i,7)*100,3) for i in num_trees4]
+#
+# print('Random Forest accuracies (as %) :' + str(rf_accuracy_4))
+#
+#
+# x4=[1]
+# y4=[60.00] # accuracy for single tree-CART
+# x4.extend(num_trees4)
+# y4.extend(rf_accuracy_4)
+# plt.plot(x4,y4,'--bo')
+# plt.xlabel('Number of trees')
+# plt.ylabel('Multiclass Accuracy (as %)')
+# plt.xlim([0,110])
+# plt.ylim([50,80])
+# plt.show()

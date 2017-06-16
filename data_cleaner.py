@@ -44,7 +44,7 @@ def prepare_data():
             for type in PLAY_TYPES:
                 if play_type_data[type].has_key(player['PLAYER_ID']):
                     player_type_data = play_type_data[type][player['PLAYER_ID']]
-                    score += player_type_data['Time']/100 * player_type_data['PPP']
+                    score += player_type_data['Time']/team_mins[team_abbr] * player_type_data['PPP']
             team_score[player['Cluster']]['total_score'] += score * percent
         team_scores[team_abbr] = team_score
     return team_scores
@@ -61,21 +61,36 @@ def prepare_game_data(team_scores):
                 game_scores[game['GAME_ID']] += team_scores[team_abbr]
             game_scores[game['GAME_ID']].append(str(1 if game['WL'] == 'W' else 0))
     return game_scores
-
+def normalize_data(original_data):
+    total_scores = []
+    percents = []
+    normalized_data = {}
+    for game_id, data in original_data.iteritems():
+        total_scores = [values['total_score'] for values in data[:-1]]
+        percents =  [values['percent'] for values in data[:-1]]
+        normalized_data[game_id] =  [{'percent':(values['percent']/sum(percents)), 'total_score': (values['total_score']/sum(total_scores))} for values in data[:-1]]
+    #
+    # total_score_dist = max(total_scores) - min(total_scores)
+    # percent_dist = max(percents) - min(percents)
+    # for game_id, data in original_data.iteritems():
+    #     normalized_data[game_id] =  [{'percent':(values['percent']/percent_dist), 'total_score': (values['total_score']/total_score_dist)} for values in data[:-1]]
+    #     normalized_data[game_id].append(data[-1])
+    return normalized_data
 def save_to_files():
     team_scores = prepare_data()
-    game_data = prepare_game_data(team_scores)
+    game_data = normalize_data(prepare_game_data(team_scores))
     test_data = ''
     test_label = ''
     train_data = ''
     train_label = ''
     parsed_data = []
+    test_data_size = 100
     for game_id, data in game_data.iteritems():
         parsed_data.append([' '.join([' '.join([str(values['percent']), str(values['total_score'])]) for values in data[:-1]]), data[-1]])
-    for data in parsed_data[:-70]:
+    for data in parsed_data[:-test_data_size]:
         train_data += data[0] + '\n'
         train_label += data[1] + '\n'
-    for data in parsed_data[len(parsed_data) - 70:]:
+    for data in parsed_data[len(parsed_data) - test_data_size:]:
         test_data += data[0] + '\n'
         test_label += data[1] + '\n'
     with open('test.data', 'w') as file:
