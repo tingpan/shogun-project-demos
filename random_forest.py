@@ -70,20 +70,22 @@ def get_rf_accuracy(num_trees,rand_subset_size):
     return acc.evaluate(out_test,test_labels)
 
 
-# import matplotlib.pyplot as plt
-# num_trees4=[5,10,20,50,100]
+import matplotlib.pyplot as plt
+num_trees4=[5,10,20,50,100]
+subset_sizes=range(2,20)
 # rf_accuracy_4=[round(get_rf_accuracy(i,7)*100,3) for i in num_trees4]
-#
-# print('Random Forest accuracies (as %) :' + str(rf_accuracy_4))
-#
-#
-# x4=[1]
-# y4=[60.00] # accuracy for single tree-CART
-# x4.extend(num_trees4)
-# y4.extend(rf_accuracy_4)
-# plt.plot(x4,y4,'--bo')
-# plt.xlabel('Number of trees')
-# plt.ylabel('Multiclass Accuracy (as %)')
-# plt.xlim([0,110])
-# plt.ylim([50,80])
-# plt.show()
+rf_accuracy_4=[round(get_rf_accuracy(20,i)*100,3) for i in subset_sizes]
+
+print('Random Forest accuracies (as %) :' + str(rf_accuracy_4))
+
+
+x4=[1]
+y4=[60.00] # accuracy for single tree-CART
+x4.extend(subset_sizes)
+y4.extend(rf_accuracy_4)
+plt.plot(x4,y4,'--bo')
+plt.xlabel('subset')
+plt.ylabel('Accuracy(%)')
+plt.xlim([0,22])
+plt.ylim([50,90])
+plt.show()

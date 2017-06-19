@@ -1,10 +1,13 @@
 # functions for creating kmeans notebook
+import os
+
 from modshogun import *
 import numpy as np
 from numpy import array
 import matplotlib.pyplot as plt
 import json
-
+HEADERS = ['Transition', 'Isolation', 'PRBallHandler', 'PRRollman', 'Postup', 'Spotup', 'Handoff', 'Cut', 'OffScreen', 'OffRebound']
+PATH = 'cluster_img'
 def load_data():
     f = open('./play_freq.data')
     features = []
@@ -46,10 +49,10 @@ def show_result(data):
     xs = []
 
     player_count = len(data[0])
-    for k in range(5, 30):
+    for k in range(10, 30):
         xs.append(k)
         _ys = []
-        for i in range(1, 11):
+        for i in range(1, 3):
             result, centers, radiuses = train_kmeans(k, data)
             for player_i in range(0, player_count):
                 cluster_i = int(result[player_i])
@@ -67,8 +70,8 @@ def get_result(k, data):
     result = []
     while True:
         result, centers, radiuses = train_kmeans(k, data)
-        r = sum(radiuses)/13
-        if r < 100:
+        r = sum(radiuses)/k
+        if r < 17:
             print(r)
             break
     return result, centers
@@ -84,21 +87,99 @@ def save_result(data):
 
     with open('result.json', 'w') as outfile:
         json.dump(output, outfile)
+def players(names, result, index):
+    players = []
+    for i, name in enumerate(names):
+            if int(result[i]) == index:
+                players.append(name)
+    print(len(players))
+    return players
 
-def draw_values(k, data, index):
-    ind = np.arange(10)
+def draw_clusters(k, data):
+    size = len(HEADERS)
+    ind = np.arange(size)
     width = 0.5
     result, centers = get_result(k, data)
-    headers = ['Transition', 'Isolation', 'PRBallHandler', 'PRRollman', 'Postup', 'Spotup', 'Handoff', 'Cut', 'OffScreen', 'OffRebound']
-    fig, ax = plt.subplots()
-    rects = plt.bar(ind, [values[index] for values in centers], width, color=[(min(x/10.0, 1), x/20.0, 0.55) for x in range(1,21,2)])
-    ax.set_ylabel('Freq Rating')
-    ax.set_title('Player Cluster')
-    ax.set_xticks(ind)
-    ax.legend(rects, headers)
+    headers = []
+    # colors = [(min(x/10.0, 1), x/20.0, 0.55) for x in range(1,21,2)]
+    colors = plt.cm.RdYlBu(np.linspace(0, 1, size))
+    for i in range(size):
+        headers.append(str(i) + ': ' + HEADERS[i])
+    fig, subs = plt.subplots(nrows=3,ncols=5, figsize=(16,7),sharex=True,sharey=True)
+    ax = []
+    for c in range(len(subs)):
+        for r in range(len(subs[0])):
+            ax.append(subs[c][r])
+    # ax[0].set_ylabel('Freq Rating')
+    ax[0].set_xticks(ind)
+    ax[0].set_yticks([])
+    player_names = []
+    for index in range(0,15):
+        rects = ax[index].bar(ind, [values[index] for values in centers], width, color=colors)
+        ax[index].set_title("Cluster " + str(index+1))
+
+        player_names.append(players(names, result, index))
+
+    ax[0].legend(rects, headers,ncol=2,loc='upper right', bbox_to_anchor = (0,1.1))
+    fig.subplots_adjust(hspace=0.1)
+    fig.tight_layout(rect=(0.3,0,1,1))
     plt.show()
 
+def draw_cluster(result, centers, index, save_file=True):
+    size = len(HEADERS)
+    ind = np.arange(size)
+    width = 0.5
+    headers = []
+    # colors = [(min(x/10.0, 1), x/20.0, 0.55) for x in range(1,21,2)]
+    colors = plt.cm.RdYlBu(np.linspace(0, 1, size))
+    for i in range(size):
+        headers.append(str(i) + ': ' + HEADERS[i])
+    player_names = players(names, result, index)
+    if save_file:
+        window_size = (16,10)
+    else:
+        window_size = (16,7)
+    fig, ax = plt.subplots(figsize=window_size)
+    ax.set_xticks(ind)
+    ax.set_yticks([])
+    rects = ax.bar(ind, [values[index] for values in centers], width, color=colors)
+    title = "Cluster " + str(index+1)
+    ax.set_title(title)
 
-# draw_values(13, data, 0)
+    ax.legend(rects, headers,ncol=3,loc='upper left')#, bbox_to_anchor = (0,1.1))
+    rows = 20
+    player_size = len(player_names)
+    cols = player_size/rows + 1
+    while cols > 2 :
+        rows += 1
+        cols = player_size/rows + 1
+    while cols < 1 :
+        rows -= 1
+        cols = player_size/rows + 1
 
-show_result(data)
+    cells = [['' for c in range(cols)] for r in range(rows)]
+    current_pos = 0
+    for c in range(cols):
+        for r in range(rows):
+            if current_pos < len(player_names):
+                cells[r][c] = player_names[current_pos]
+            current_pos+=1
+    col_headers = ['player' for i in range(cols)]
+    table = ax.table(cellText=cells, colLabels=col_headers,cellLoc='left', bbox=(1,0,1.1,1),colLoc='left')
+    fig.tight_layout(rect=(0,0,0.5,1))
+
+    table.set_fontsize(24)
+    if save_file:
+        plt.savefig(os.path.join(PATH,title+'.svg'))
+    else:
+        plt.show()
+
+def get_images(k, data):
+    result, centers = get_result(k, data)
+    for i in range(k):
+        draw_cluster(result, centers, i, save_file=True)
+        print('File saved: '  + str(i+1) + ' of ' + str(k))
+
+# draw_clusters(13, data)
+get_images(13, data)
+# show_result(data)
