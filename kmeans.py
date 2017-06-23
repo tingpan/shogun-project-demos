@@ -107,6 +107,7 @@ def draw_clusters(k, data):
         headers.append(str(i) + ': ' + HEADERS[i])
     fig, subs = plt.subplots(nrows=3,ncols=5, figsize=(16,7),sharex=True,sharey=True)
     ax = []
+    title = 'All Clusters'
     for c in range(len(subs)):
         for r in range(len(subs[0])):
             ax.append(subs[c][r])
@@ -114,15 +115,16 @@ def draw_clusters(k, data):
     ax[0].set_xticks(ind)
     ax[0].set_yticks([])
     player_names = []
-    for index in range(0,15):
+    for index in range(0,k):
         rects = ax[index].bar(ind, [values[index] for values in centers], width, color=colors)
         ax[index].set_title("Cluster " + str(index+1))
 
         player_names.append(players(names, result, index))
 
-    ax[0].legend(rects, headers,ncol=2,loc='upper right', bbox_to_anchor = (0,1.1))
+    ax[0].legend(rects, headers,ncol=3,loc='upper right', bbox_to_anchor = (0,1.1))
     fig.subplots_adjust(hspace=0.1)
     fig.tight_layout(rect=(0.3,0,1,1))
+    plt.savefig(os.path.join(PATH,title+'.jpg'))
     plt.show()
 
 def draw_cluster(result, centers, index, save_file=True):
@@ -167,10 +169,9 @@ def draw_cluster(result, centers, index, save_file=True):
     col_headers = ['player' for i in range(cols)]
     table = ax.table(cellText=cells, colLabels=col_headers,cellLoc='left', bbox=(1,0,1.1,1),colLoc='left')
     fig.tight_layout(rect=(0,0,0.5,1))
-
     table.set_fontsize(24)
     if save_file:
-        plt.savefig(os.path.join(PATH,title+'.svg'))
+        plt.savefig(os.path.join(PATH,title+'.jpg'))
     else:
         plt.show()
 
