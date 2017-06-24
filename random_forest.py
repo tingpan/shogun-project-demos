@@ -108,24 +108,47 @@ def get_oob_errors_wine(num_trees,rand_subset_size):
     eval=MulticlassAccuracy()
     return rf.get_oob_error(eval)
 
-rf=setup_random_forest(10,7,comb_rule,feat_types)
-rf.set_labels(train_labels)
-rf.train(train_feats)
-metrics=[ROCEvaluation(), AccuracyMeasure(), ErrorRateMeasure(), F1Measure(), PrecisionMeasure(), RecallMeasure(), SpecificityMeasure()]
+# subset size 2
 
-for metric in metrics:
-    print metric.get_name(), metric.evaluate(rf.apply(train_feats), train_labels)
-# metric=AccuracyMeasure()
-# k = 5
-# stratified_split=StratifiedCrossValidationSplitting(train_labels, k)
-#
-# cross=CrossValidation(rf, train_feats, train_labels, stratified_split, metric)
-#
-# # perform the cross-validation, note that this call involved a lot of computation
-# result=cross.evaluate()
-#
-# # the result needs to be casted to CrossValidationResult
-# result=CrossValidationResult.obtain_from_generic(result)
-#
-# # this class contains a field "mean" which contain the mean performance metric
-# print "Testing", metric.get_name(), result.mean
+num_trees2=[10,20,50,100]
+rf_accuracy_2=[round(get_rf_accuracy(i,2)*100,3) for i in num_trees2]
+
+print('Random Forest accuracies (as %) :' + str(rf_accuracy_2))
+
+# subset size 8
+
+num_trees8=[5,10,50,100]
+rf_accuracy_8=[round(get_rf_accuracy(i,8)*100,3) for i in num_trees8]
+
+print('Random Forest accuracies (as %) :' + str(rf_accuracy_8))
+num_trees4=[5,10,20,50,100]
+rf_accuracy_4=[round(get_rf_accuracy(i,4)*100,3) for i in num_trees4]
+
+print('Random Forest accuracies (as %) :' + str(rf_accuracy_4))
+
+# plot results
+
+x4=[1]
+y4=[50] # accuracy for single tree-CART
+x4.extend(num_trees4)
+y4.extend(rf_accuracy_4)
+
+x2=[1]
+y2=[50]
+x2.extend(num_trees2)
+y2.extend(rf_accuracy_2)
+
+x8=[1]
+y8=[50]
+x8.extend(num_trees8)
+y8.extend(rf_accuracy_8)
+
+plt.plot(x2,y2,'--bo',label='Subset Size = 2')
+plt.plot(x4,y4,'--r^',label='Subset Size = 4')
+plt.plot(x8,y8,'--gs',label='Subset Size = 8')
+plt.xlabel('Number of trees')
+plt.ylabel('Multiclass Accuracy (as %) ')
+plt.legend(bbox_to_anchor=(0.92,0.4))
+plt.xlim([0,110])
+plt.ylim([50,100])
+plt.show()
