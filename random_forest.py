@@ -107,7 +107,7 @@ def train_and_show():
     print('OOB accuracy : ' + str(round(oobe * 100, 3)) + '%')
 
 
-def get_oob_errors_wine(num_trees, rand_subset_size):
+def get_oob_errors(num_trees, rand_subset_size):
     feat_types = array([False] * 52)
     rf = setup_random_forest(num_trees, rand_subset_size, MajorityVote(), feat_types)
     rf.set_labels(train_labels)
@@ -168,7 +168,7 @@ def show_diff_of_num_of_trees():
 
 
 size=[1,2,4,6,8,10,13]
-oobe=[round(get_oob_errors_wine(400,i)*100,3) for i in size]
+oobe=[round(get_oob_errors(400,i)*100,3) for i in size]
 
 print('Out-of-box Accuracies (as %) : '+str(oobe))
 
