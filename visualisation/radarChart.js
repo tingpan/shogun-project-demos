@@ -15,11 +15,13 @@ function RadarChart(className, data, options) {
         labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
         wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
         opacityArea: 0.35, 	//The opacity of the area of the blob
-        dotRadius: 4, 			//The size of the colored circles of each blog
+        dotRadius: 6, 			//The size of the colored circles of each blog
         opacityCircles: 0.1, 	//The opacity of the circles of each blob
         strokeWidth: 2, 		//The width of the stroke around each blob
         roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-        color: d3.scale.category10()	//Color function
+        color: d3.scale.category20c(),	//Color function
+        desc: false, // Show description
+        pointColor: d3.scale.category20() // Color of points
     };
     var id = "." + className;
 
@@ -53,7 +55,6 @@ function RadarChart(className, data, options) {
     /////////////////////////////////////////////////////////
 
     //Remove whatever chart with the same id/class was present before
-    console.log(d3.selectAll(id)[0].length);
     if (d3.selectAll(id)[0].length == 0) {
         d3.select('body').append('div').attr('class', className);
     }
@@ -139,21 +140,23 @@ function RadarChart(className, data, options) {
         .style("stroke-width", "2px");
 
     //Append the labels at each axis
-    axis.append("text")
-        .attr("class", "legend")
-        .style("font-size", "11px")
-        .attr("text-anchor", "middle")
-        .attr("dy", "0.35em")
-        .attr("x", function (d, i) {
-            return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2);
-        })
-        .attr("y", function (d, i) {
-            return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2);
-        })
-        .text(function (d) {
-            return d
-        })
-        .call(wrap, cfg.wrapWidth);
+    if (cfg.desc) {
+        axis.append("text")
+            .attr("class", "legend")
+            .style("font-size", "11px")
+            .attr("text-anchor", "middle")
+            .attr("dy", "0.35em")
+            .attr("x", function (d, i) {
+                return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2);
+            })
+            .attr("y", function (d, i) {
+                return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2);
+            })
+            .text(function (d) {
+                return d
+            })
+            .call(wrap, cfg.wrapWidth);
+    }
 
     /////////////////////////////////////////////////////////
     ///////////// Draw the radar chart blobs ////////////////
@@ -235,7 +238,7 @@ function RadarChart(className, data, options) {
             return rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2);
         })
         .style("fill", function (d, i, j) {
-            return cfg.color(j);
+            return cfg.pointColor(i);
         })
         .style("fill-opacity", 0.8);
 
@@ -272,7 +275,8 @@ function RadarChart(className, data, options) {
             tooltip
                 .attr('x', newX)
                 .attr('y', newY)
-                .text(d.originValue)
+                .attr('dy', -3)
+                .text(d.axis + ': ' + String(d.originValue)).call(wrap, 10)
                 .transition().duration(200)
                 .style('opacity', 1);
         })
@@ -312,6 +316,8 @@ function RadarChart(className, data, options) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
+                    console.log(dy)
+                    console.log(line)
                     tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
                 }
             }

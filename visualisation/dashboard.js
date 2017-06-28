@@ -22,40 +22,29 @@ var MEASURE_TYPES = {
 
 var dataSet;
 
-function drawWithAPI(type, className, names) {
+function drawWithAPI(className, names , size, _top, right, bottom, left) {
     d3.json(API_PATH, function (error, data) {
         if (error) {
             console.log(error);
         } else {
-            console.log(data);
+            //console.log(data);
             dataSet = parseData(data);
             var playerStats = findByName(names);
-            console.log(playerStats)
-            drawDashboard(playerStats, className);
+            drawDashboard(playerStats, className, size, _top, right, bottom, left);
         }
     });
 }
-drawWithAPI("Efficiency", 'chart-01',  ["rondo"]);
-drawWithAPI("Efficiency", 'chart-03',  ["rondo", 'chris paul']);
-drawWithAPI("Efficiency", 'chart-04',  ["rondo", 'wall']);
-drawWithAPI("Efficiency", 'chart-05',  ["rondo", 'parker']);
-
-function drawDashboard(data, className) {
-    var margin = {top: 50, right: 100, bottom: 50, left: 100},
-        width = Math.min(400, window.innerWidth - 10) - margin.left - margin.right,
+function drawDashboard(data, className, size, _top, right, bottom, left) {
+    var margin = {top: _top, right: right, bottom: bottom, left: left},
+        width = Math.min(size, window.innerWidth - 10) - margin.left - margin.right,
         height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
-
-    var color = d3.scale.ordinal()
-        .range(["#EDC951", "#CC333F", "#00A0B0"]);
-
     var radarChartOptions = {
         w: width,
         h: height,
         margin: margin,
-        maxValue: 0.5,
-        levels: 5,
-        roundStrokes: true,
-        color: color
+        maxValue: 1,
+        levels: 10,
+        roundStrokes: false,
     };
     //Call function to draw the Radar chart
     RadarChart(className.toLowerCase(), data, radarChartOptions);
@@ -68,7 +57,6 @@ function parseData(data) {
     result.stats = {};
     var resultSet = data['resultSets'][0];
     var headers = resultSet['headers'].slice(8);
-    console.log(headers);
     var rowSet = resultSet['rowSet'];
     result.maxValues = {};
     result.minValues = {};
@@ -116,7 +104,7 @@ function findByName(names) {
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
             if (dataSet.players[key].toLowerCase().includes(name)) {
-                console.log(dataSet.players[key].toLowerCase())
+                //console.log(dataSet.players[key].toLowerCase())
                 return dataSet.stats[key]
             }
         }
