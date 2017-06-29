@@ -1,26 +1,8 @@
 var API_PATH = "pass.json";
-var DASH_API = function (type) {
-    return "http://stats.nba.com/stats/leaguedashptstats?PtMeasureType=" + type + "&College=&Conference=&Country=&DateFrom=&DateTo=&Division=&DraftPick=&DraftYear=&GameScope=&Height=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=&Season=2015-16&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=&Weight=";
-};
-
-// The field PtMeasureType must match the regular expression '^(SpeedDistance)|(Rebounding)|(Possessions)|(CatchShoot)|(PullUpShot)|(Defense)|(Drives)|(Passing)|(ElbowTouch)|(PostTouch)|(PaintTouch)|(Efficiency)$'.
-
-var MEASURE_TYPES = {
-    Passing: "Passing",
-    Defense: "Defense",
-    Possessions: "Possessions",
-    CatchShoot: "CatchShoot",
-    SpeedDistance: "SpeedDistance",
-    Rebounding: "Rebounding",
-    PullUpShot: "PullUpShot",
-    Drives: "Drives",
-    ElbowTouch: "ElbowTouch",
-    PostTouch: "PostTouch",
-    PaintTouch: "PaintTouch",
-    Efficiency: "Efficiency"
-};
-
 var dataSet;
+var CLUSTER_RESULT_PATH = '../centers.json';
+
+HEADERS = ['Transition', 'Isolation', 'PRBallHandler', 'PRRollman', 'Postup', 'Spotup', 'Handoff', 'Cut', 'OffScreen', 'OffRebound']
 
 function drawWithAPI(className, names , size, _top, right, bottom, left) {
     d3.json(API_PATH, function (error, data) {
@@ -34,7 +16,35 @@ function drawWithAPI(className, names , size, _top, right, bottom, left) {
         }
     });
 }
-function drawDashboard(data, className, size, _top, right, bottom, left) {
+
+
+function drawClusters(className, size, _top, right, bottom, left) {
+    d3.json(CLUSTER_RESULT_PATH, function (error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(data);
+            var radarData = [];
+            var maxValue = 0;
+            for (var i = 0; i < data.length; i++) {
+                var axisData = data[i];
+                while (radarData.length < axisData.length) {
+                    radarData.push([])
+                }
+                axisData.forEach(function (value, index) {
+                    maxValue = Math.max(maxValue, value);
+                    radarData[index].push({axis: HEADERS[i], value: value, originValue: value});
+                })
+            }
+            maxValue = 30;
+            radarData.forEach(function (line, index) {
+                d3.select('.' + className).append('span').attr('class', 'type-' + String(index));
+                drawDashboard([line], 'type-' + String(index), size, _top, right, bottom, left, maxValue);
+            });
+        }
+    });
+}
+function drawDashboard(data, className, size, _top, right, bottom, left, maxValue) {
     var margin = {top: _top, right: right, bottom: bottom, left: left},
         width = Math.min(size, window.innerWidth - 10) - margin.left - margin.right,
         height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
@@ -42,7 +52,7 @@ function drawDashboard(data, className, size, _top, right, bottom, left) {
         w: width,
         h: height,
         margin: margin,
-        maxValue: 1,
+        maxValue: maxValue,
         levels: 10,
         roundStrokes: false,
     };

@@ -11,7 +11,7 @@ function RadarChart(className, data, options) {
         h: 600,				//Height of the circle
         margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
         levels: 3,				//How many levels or inner circles should there be drawn
-        maxValue: 0, 			//What is the value that the biggest circle will represent
+        maxValue: 1, 			//What is the value that the biggest circle will represent
         labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
         wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
         opacityArea: 0.35, 	//The opacity of the area of the blob
@@ -19,7 +19,7 @@ function RadarChart(className, data, options) {
         opacityCircles: 0.1, 	//The opacity of the circles of each blob
         strokeWidth: 2, 		//The width of the stroke around each blob
         roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-        color: d3.scale.category20c(),	//Color function
+        color: d3.scale.category10(),	//Color function
         desc: false, // Show description
         pointColor: d3.scale.category20() // Color of points
     };
@@ -35,7 +35,7 @@ function RadarChart(className, data, options) {
     }//if
 
     //If the supplied maxValue is smaller than the actual one, replace by the max in the data
-    var maxValue = 1;//Math.max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
+    var maxValue = cfg.maxValue//Math.max(cfg.maxValue, d3.max(data, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 
     var allAxis = (data[0].map(function (i, j) {
             return i.axis
@@ -271,14 +271,17 @@ function RadarChart(className, data, options) {
         .on("mouseover", function (d, i) {
             newX = parseFloat(d3.select(this).attr('cx')) - 10;
             newY = parseFloat(d3.select(this).attr('cy')) - 10;
-
+            var content = String(d.originValue);
+            if (!cfg.desc) {
+                content = d.axis + ': ' + String(d.originValue)
+            }
             tooltip
                 .attr('x', newX)
                 .attr('y', newY)
-                .attr('dy', -3)
-                .text(d.axis + ': ' + String(d.originValue)).call(wrap, 10)
+                .attr('dy', -1)
+                .text(content).call(wrap, 10)
                 .transition().duration(200)
-                .style('opacity', 1);
+                .style('opacity', 1).style('background','blue');
         })
         .on("mouseout", function () {
             tooltip.transition().duration(200)
@@ -316,8 +319,6 @@ function RadarChart(className, data, options) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
-                    console.log(dy)
-                    console.log(line)
                     tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
                 }
             }

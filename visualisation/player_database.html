@@ -39,118 +39,13 @@
     <div class="col-sm-12">
       <div class="chart-wrapper">
         <div class="chart-title">
-          Profile
+          Types
         </div>
         <div class="chart-stage">
-          <span class="type-01"></span>
-          <span class="type-02"></span>
-          <span class="type-03"></span>
-          <span class="type-04"></span>
-          <span class="type-05"></span>
-          <span class="type-06"></span>
-          <span class="type-07"></span>
-          <span class="type-08"></span>
-          <span class="type-09"></span>
-          <span class="type-10"></span>
         </div>
         <div class="chart-notes">
           Notes
         </div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Player Type
-        </div>
-        <div class="chart-stage">
-          <div id="chart-01" class="chart-01">
-          </div>
-        </div>
-        <div class="chart-notes">
-          Notes
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Player Type
-        </div>
-        <div class="chart-stage">
-          <div id="chart-00" class="chart-00">
-          </div>
-        </div>
-        <div class="chart-notes">
-          Notes
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-
-  <div class="row">
-
-    <div class="col-sm-4">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Similar Player: Chris Paul
-        </div>
-        <div class="chart-stage">
-          <div id="chart-03", class="chart-03"></div>
-        </div>
-        <div class="chart-notes">
-          Notes go down here
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-4">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Similar Player: Wall
-        </div>
-        <div class="chart-stage">
-          <div id="chart-04", class="chart-04"></div>
-        </div>
-        <div class="chart-notes">
-          Notes go down here
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-4">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Similar Player: Parker
-        </div>
-        <div class="chart-stage">
-          <div id="chart-05", class="chart-05"></div>
-        </div>
-        <div class="chart-notes">
-          Notes go down here
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="row">
-    <div class="col-sm-3">
-      <div class="chart-wrapper">
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="chart-wrapper">
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="chart-wrapper">
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="chart-wrapper">
       </div>
     </div>
   </div>
@@ -165,25 +60,15 @@
 
 <script type="text/javascript" src="assets/lib/keen-js/dist/keen.min.js"></script>
 <script type="text/javascript" src="assets/js/meta.js"></script>
-<script type="text/javascript" src="keen.dashboard.js"></script>
 <script type="text/javascript" src="radarChart.js"></script>
 <script type="text/javascript" src="dashboard.js"></script>
 <script type="text/javascript">
   var size = 300,
-          _top = 20,
-          right = 50,
+          _top = 50,
+          right = 60,
           bottom = 50,
           left = 50;
-  drawWithAPI('type-01',  ["rondo"], size, _top, right, bottom, left);
-  drawWithAPI('type-02',  ['chris paul'], size, _top, right, bottom, left);
-  drawWithAPI('type-03',  ['james'], size, _top, right, bottom, left);
-  drawWithAPI('type-04',  ['anthony'], size, _top, right, bottom, left);
-  drawWithAPI('type-05',  ['bosh'], size, _top, right, bottom, left);
-  drawWithAPI('type-06',  ['hard'], size, _top, right, bottom, left);
-  drawWithAPI('type-07',  ['westb'], size, _top, right, bottom, left);
-  drawWithAPI('type-08',  ['duncan'], size, _top, right, bottom, left);
-  drawWithAPI('type-09',  ['kawhi'], size, _top, right, bottom, left);
-  drawWithAPI('type-10',  ['wall'], size, _top, right, bottom, left);
+  drawClusters('chart-stage', size, _top, right, bottom, left)
 </script>
 
 <script type="text/javascript" src="bar_chart.js"></script>
